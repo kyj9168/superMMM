@@ -7,7 +7,6 @@ public class GameThread extends Thread {
 			GameThread.sleep(500);
 			System.out.println("thread ³»ºÎ");
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

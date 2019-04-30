@@ -1,8 +1,11 @@
 package view.game;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
+import javax.sound.midi.Synthesizer;
 
 public class CoinController {
 	private List<CoinVO> coinList;
@@ -14,20 +17,21 @@ public class CoinController {
 	// 코인을 리스트에 추가
 	public void addCoin() {
 		Random random = new Random();
-		final int coinX = 900; // 초기 x좌표
-		int coinY = random.nextInt(300);
+		final int coinX = 950; // 초기 x좌표
+		int coinY = random.nextInt(100)+500; // 초기 y좌표
 		if(coinList.size()>0) {
-			int lastCoinY = coinList.get(coinList.size()-1).getCoinY(); // 마지막 코인의 y좌표
-			int distance = lastCoinY-coinY;
-			while( ( distance>0 && distance<50 ) || ( distance<=0 && distance>-50 )  ) {
-				coinY = random.nextInt(300)+300; // 초기 y좌표
-				distance = lastCoinY-coinY;
-			}
+			int lastCoinY = coinList.get(coinList.size()-1).getCoinY(); // 마지막 코인의 y좌표	
 		}
-		
-		char coinType = ( random.nextInt(10) > 0 )? 'Y' : 'P';
+		char coinType = ( random.nextInt(10) > 0 )? 'y' : 'p';
 		CoinVO coinVO = new CoinVO(coinX, coinY, coinType);
+		System.out.println(coinVO);
 		coinList.add(coinVO);
+	
+		
+			
+			
+			
+		
 	}
 	
 	// 모든 코인들을 왼쪽으로 x만큼 이동
@@ -39,6 +43,9 @@ public class CoinController {
 			// coinVO.setCoinX( coinVO.getCoinX() - x );
 			coinVO.moveToX(x);
 		}
+		
+		
+		
 	}
 	
 	// x좌표, y좌표 값으로 코인의 list에서의 index를 구함
