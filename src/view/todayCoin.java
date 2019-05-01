@@ -49,7 +49,7 @@ public class todayCoin extends JPanel {
   		public void actionPerformed(ActionEvent e) {
   			GamePanel gamePanel = new GamePanel(mf);
   			ChangePanel.changePanel(mf, op, gamePanel);
-  			new MainFrame().game();
+  			new GamePanel(mf);
   		}
   	});
 
