@@ -14,6 +14,7 @@ public class ChangePanel {
 	}
 	
 	public void replacePanel(JPanel changePanel) {
+		MainFrame.Sound("audio/Coin.wav", false);
 		mf.remove(panel);
 		mf.add(changePanel);
 		mf.repaint();

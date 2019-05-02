@@ -3,13 +3,17 @@ package view;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.xml.ws.soap.AddressingFeature;
 
 public class gameEnd extends JPanel{
 	ImageIcon icon;
@@ -17,12 +21,11 @@ public class gameEnd extends JPanel{
 	private JTextField textField;
 	private JPasswordField passwordField;
 	private JTextField hpField;
-	private MainFrame mf;
-	private JPanel op;
-	
-	public gameEnd(MainFrame mf) {
+	private JFrame mf;
+	private JPanel panel;
+	public gameEnd(JFrame mf) {
 		this.mf = mf;
-		this.op = this;
+		this.panel = this;
 		
 		this.setLayout(null);
 
@@ -63,6 +66,17 @@ public class gameEnd extends JPanel{
 		jRetry.setOpaque(false);
 		jRetry.setContentAreaFilled(false);
 		jRetry.setBorderPainted(false);
+		
+		jRetry.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				ChangePanel cp = new ChangePanel(mf, panel);
+				GamePanel gp = new GamePanel(mf);
+				cp.replacePanel(gp);
+			}
+		});
 		this.add(jRetry);
 
 		
@@ -73,6 +87,17 @@ public class gameEnd extends JPanel{
 		jMain.setOpaque(false);
 		jMain.setContentAreaFilled(false);
 		jMain.setBorderPainted(false);
+		
+		jMain.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				ChangePanel cp = new ChangePanel(mf, panel);
+				BackgroundPanel bp = new BackgroundPanel(mf);
+				cp.replacePanel(bp);
+			}
+		});
 		this.add(jMain);
 
 		

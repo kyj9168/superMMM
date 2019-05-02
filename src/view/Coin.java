@@ -21,11 +21,11 @@ public class Coin {
 		this.width = width;
 		this.height = height;
 
-		img = imgCoin.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+		img = imgCoin.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 
-		w = 30;
+		w = 50;
 
-		h = 30;
+		h = 50;
 
 		Random rnd = new Random();
 

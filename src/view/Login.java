@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -59,6 +60,60 @@ public class Login extends JPanel {
 
 		passwordField = new JPasswordField();
 		passwordField.setBounds(400, 300, 220, 50);
+
+		passwordField.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					System.out.println("NON!!!!");
+					try {
+						String s = null;
+
+						boolean result = true;
+						BufferedReader br = new BufferedReader(new FileReader("회원명단.txt"));
+
+						while ((s = br.readLine()) != null) {
+
+							String[] array = s.split("/");
+
+							if (idField.getText().equals(array[1])) {
+
+								if (passwordField.getText().equals(array[2])) {
+									result = false;
+									JOptionPane.showMessageDialog(null, "로그인이 되었습니다!!");
+									ChangePanel cp = new ChangePanel(mf, panel);
+									todayCoin tc = new todayCoin(mf);
+									cp.replacePanel(tc);
+
+								}
+							}
+						}
+						if (result) {
+							JOptionPane.showMessageDialog(null, "로그인 실패");
+							return;
+						}
+
+					} catch (IOException E10) {
+						E10.printStackTrace();
+					}
+				}
+			}
+		});
+
 		this.add(passwordField);
 
 		JButton lblLogin = new JButton(
@@ -102,7 +157,6 @@ public class Login extends JPanel {
 				} catch (IOException E10) {
 					E10.printStackTrace();
 				}
-
 			}
 
 		});

@@ -53,7 +53,9 @@ public class todayCoin extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				ChangePanel cp = new ChangePanel(mf, panel);
 				GamePanel gamePanel = new GamePanel(mf);
-
+				
+				
+				
 				// PlayGame pg = new PlayGame(mf, gamePanel);
 				// Thread t1 = pg;
 				// pg.run();
@@ -150,7 +152,10 @@ public class todayCoin extends JPanel {
 					}
 
 				});
+				
+				MainFrame.Sound("", false);
 				cp.replacePanel(gamePanel);
+				
 			}
 		});
 
