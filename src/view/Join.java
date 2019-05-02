@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,18 +20,18 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class Join extends JPanel {
-	
+
 	ImageIcon icon;
-	private MainFrame mf;
+	private JFrame mf;
 	private JTextField nameField;
 	private JTextField idField;
 	private JPasswordField passwordField;
 	private JTextField hpField;
-	private JPanel op;
+	private JPanel panel;
 
-	public Join(MainFrame mf) {
+	public Join(JFrame mf) {
 		this.mf = mf;
-		this.op = this;
+		panel = this;
 		this.setVisible(true);
 		this.setLayout(null);
 
@@ -92,94 +93,92 @@ public class Join extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ChangePanel.changePanel(mf, op, new BackgroundPanel(mf));
-				try{
-					BufferedWriter bos = new BufferedWriter(new FileWriter("회원명단.txt",true));
-					bos.write(nameField.getText()+"/");
-					bos.write(idField.getText()+"/");
-					bos.write(passwordField.getText()+"/");
-					bos.write(hpField.getText()+"/");
-					bos.write(0+"\r\n");
-					
+				ChangePanel cp = new ChangePanel(mf, panel);
+				BackgroundPanel back = new BackgroundPanel(mf);
+				cp.replacePanel(back);
+				try {
+					BufferedWriter bos = new BufferedWriter(new FileWriter("회원명단.txt", true));
+					bos.write(nameField.getText() + "/");
+					bos.write(idField.getText() + "/");
+					bos.write(passwordField.getText() + "/");
+					bos.write(hpField.getText() + "/");
+					bos.write(0 + "\r\n");
+
 					bos.close();
 					JOptionPane.showMessageDialog(null, "회원가입을 축하합니다!!");
-					
-				}catch (Exception ex){
+
+				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(null, "회원가입에 실패하였습니다.");
 				}
-				
-				
+
 			}
 		});
 
 		this.add(lblJoin);
-		
-		JButton lblback = new JButton();
-        Image back = new ImageIcon("images/backbutton.png").getImage().getScaledInstance(50, 50, 0);
-        lblback.setIcon(new ImageIcon(back));
-        lblback.setBounds(0, 0, 170, 80);
-        lblback.setOpaque(false);
-        lblback.setContentAreaFilled(false);
-        lblback.setBorderPainted(false);
-        
-        lblback.addActionListener(new ActionListener() {
 
-           @Override
-           public void actionPerformed(ActionEvent e) {
-              ChangePanel.changePanel(mf, op, new BackgroundPanel(mf));
-           }
-        });
-        this.add(lblback);
-        
-        JButton overlapId = new JButton();
-        Image overlap = new ImageIcon("images/ovarlapId.png").getImage().getScaledInstance(130, 60, 0);
-        overlapId.setIcon(new ImageIcon(overlap));
-        overlapId.setBounds(750, 175, 130, 60);
-        overlapId.setOpaque(false);
-        overlapId.setContentAreaFilled(false);
-        overlapId.setBorderPainted(false);
-        overlapId.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-              BufferedReader br = null;
-                          try{
+		JButton lblback = new JButton();
+		Image back = new ImageIcon("images/backbutton.png").getImage().getScaledInstance(50, 50, 0);
+		lblback.setIcon(new ImageIcon(back));
+		lblback.setBounds(0, 0, 170, 80);
+		lblback.setOpaque(false);
+		lblback.setContentAreaFilled(false);
+		lblback.setBorderPainted(false);
+
+		lblback.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ChangePanel cp = new ChangePanel(mf, panel);
+				BackgroundPanel back = new BackgroundPanel(mf);
+				cp.replacePanel(back);
+			}
+		});
+		this.add(lblback);
+
+		JButton overlapId = new JButton();
+		Image overlap = new ImageIcon("images/ovarlapId.png").getImage().getScaledInstance(130, 60, 0);
+		overlapId.setIcon(new ImageIcon(overlap));
+		overlapId.setBounds(750, 175, 130, 60);
+		overlapId.setOpaque(false);
+		overlapId.setContentAreaFilled(false);
+		overlapId.setBorderPainted(false);
+		overlapId.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				BufferedReader br = null;
+				try {
 					String s = null;
 
-
-	                boolean result = true;
+					boolean result = true;
 					br = new BufferedReader(new FileReader("회원명단.txt"));
 
+					while ((s = br.readLine()) != null) {
 
-					while((s=br.readLine()) != null){
+						String[] array = s.split("/");
 
-						String [] array=s.split("/");
+						if (idField.getText().equals(array[0])) {
 
-						if(idField.getText().equals(array[0])) {
+							result = false;
+							JOptionPane.showMessageDialog(null, "중복된 아이디 입니다.");
+							return;
 
-							
-								 result = false;
-								JOptionPane.showMessageDialog(null, "중복된 아이디 입니다.");
-								return;
-
-							
 						}
-					}if(result) {
-		                   JOptionPane.showMessageDialog(null, "사용 가능한 아이디 입니다.");
-		                   return;
-		                }
+					}
+					if (result) {
+						JOptionPane.showMessageDialog(null, "사용 가능한 아이디 입니다.");
+						return;
+					}
 
-					
-				}catch (IOException E10){
+				} catch (IOException E10) {
 					E10.printStackTrace();
 				}
 			}
 		});
 
-        this.add(overlapId);
-
+		this.add(overlapId);
 
 		this.add(label);
 		this.setSize(1000, 800);
 	}
-//0421
+	// 0421
 }

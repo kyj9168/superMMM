@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -12,13 +13,13 @@ import javax.swing.JTextField;
 
 public class StorePanel extends JPanel {
 
-	private JPanel op;
-	private MainFrame mf;
+	private JPanel panel;
+	private JFrame mf;
 
-	public StorePanel(MainFrame mf) {
+	public StorePanel(JFrame mf) {
 		JTextField tf = new JTextField(10);
 		this.mf = mf;
-		this.op = this;
+		panel = this;
 
 		this.setLayout(null);
 
@@ -38,18 +39,21 @@ public class StorePanel extends JPanel {
 				int result = JOptionPane.showConfirmDialog(null,"아메리카노 쿠폰을 구매 하시겠습니까?","confirm",JOptionPane.YES_NO_OPTION);
 				if(result == JOptionPane.CLOSED_OPTION) {
 					tf.setText("just closed without selection");
-					ChangePanel.changePanel(mf, op, new StorePanel(mf));
-				}
+					ChangePanel cp = new ChangePanel(mf, panel);
+					StorePanel sp = new StorePanel(mf);
+					cp.replacePanel(sp);				}
 				else if(result == JOptionPane.YES_OPTION) {
 					tf.setText("Yes");
 					JOptionPane.showMessageDialog(null, "구매가 완료되었습니다.");
-					ChangePanel.changePanel(mf, op, new StorePanel(mf));
-				}
+					ChangePanel cp = new ChangePanel(mf, panel);
+					StorePanel sp = new StorePanel(mf);
+					cp.replacePanel(sp);				}
 				else {
 					tf.setText("No");
 					JOptionPane.showMessageDialog(null, "구매를 취소하였습니다.");
-					ChangePanel.changePanel(mf, op, new StorePanel(mf));
-				}
+					ChangePanel cp = new ChangePanel(mf, panel);
+					StorePanel sp = new StorePanel(mf);
+					cp.replacePanel(sp);				}
 			}
 		});
 		
@@ -69,18 +73,25 @@ public class StorePanel extends JPanel {
 				int result = JOptionPane.showConfirmDialog(null,"한식 뷔페 쿠폰을 구매 하시겠습니까?","confirm",JOptionPane.YES_NO_OPTION);
 				if(result == JOptionPane.CLOSED_OPTION) {
 					tf.setText("just closed without selection");
-					ChangePanel.changePanel(mf, op, new StorePanel(mf));
+					ChangePanel cp = new ChangePanel(mf, panel);
+					StorePanel sp = new StorePanel(mf);
+					cp.replacePanel(sp);
 				}
 				else if(result == JOptionPane.YES_OPTION) {
 					tf.setText("Yes");
 					JOptionPane.showMessageDialog(null, "구매가 완료되었습니다.");
-					ChangePanel.changePanel(mf, op, new StorePanel(mf));
+					ChangePanel cp = new ChangePanel(mf, panel);
+					StorePanel sp = new StorePanel(mf);
+					cp.replacePanel(sp);
 				}
 				else {
 					tf.setText("No");
 					JOptionPane.showMessageDialog(null, "구매를 취소하였습니다.");
-					ChangePanel.changePanel(mf, op, new StorePanel(mf));
+					ChangePanel cp = new ChangePanel(mf, panel);
+					StorePanel sp = new StorePanel(mf);
+					cp.replacePanel(sp);
 				}
+				
 			}
 		});
 		
@@ -93,7 +104,9 @@ public class StorePanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ChangePanel.changePanel(mf, op, new todayCoin(mf));
+				ChangePanel cp = new ChangePanel(mf, panel);
+				todayCoin tc = new todayCoin(mf);
+				cp.replacePanel(tc);
 			}
 		});
 		this.add(label);
@@ -103,6 +116,5 @@ public class StorePanel extends JPanel {
 		
 		this.setComponentZOrder(label, 3);
 		this.setSize(1000, 800);
-		mf.add(this);
 	}
 }

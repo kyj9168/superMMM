@@ -1,6 +1,10 @@
 package view;
 
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,141 +13,233 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
+import controller.Debuggable;
+import controller.JumpListener;
+import controller.JumpThread;
 import view.game.CoinController;
-import view.game.CoinVO;
 import view.game.MarioVO;
 
-public class GamePanel extends JPanel {
-	CoinController coinController;
-	ImageIcon icon;
-	private MainFrame mf;
-	private JPanel op;
+public class GamePanel extends JPanel implements JumpListener, Debuggable {
+	int mode = MODE_DEBUG;
+	/**
+	 * 버전
+	 */
+	String VERSION = "0.1.0";
+	/**
+	 * 땅바닥의 Y축 (이 이상의 값으로는 주인공의 Y좌표값이 변화하지 않음)
+	 */
+	int BOTTOM_Y = 423;
+	int lastPressedKeyCode = 1;
+	/**
+	 * 점프를 누른후에 생성되어서 점프동작을 하는 쓰레드
+	 */
+	JumpThread jumpThread;
+	/**
+	 * 점프를 하는 캐릭터에 대한 정보를 담고 있는 클래스
+	 */
+	private JFrame mf;
+	private JPanel panel;
+	private CoinController coinController;
+	private ImageIcon icon;
+	private JLabel mario;
+	private JLabel back;
+	private MarioVO marioVO;
+	private List<JLabel> tmpLblCoinList = new ArrayList<>();
+	ArrayList<Coin> coins = new ArrayList<Coin>();
+	int width;
+	int height;
 
-	MarioVO marioVO;
-	List<JLabel> tmpLblCoinList = new ArrayList<>();
+	int x, y, w, h;
+	int dx = 0, dy = 0;
 
-	public GamePanel(MainFrame mf) {
-		coinController = new CoinController();
+	int score;
+
+	Image imgBack, imgPlayer, imgCoin;
+
+	public GamePanel(JFrame mf) {
 
 		this.mf = mf;
-		this.op = this;
+		panel = this;
+		this.setBounds(0, 0, 1000, 800);
+
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+		imgBack = toolkit.getImage("images/back.jpg");
+
+		imgPlayer = toolkit.getImage("images/mario0.gif");
+
+		imgCoin = toolkit.getImage("images/gold_0000.gif");
+
+		GameThread gThread = new GameThread();
+		gThread.start();
 		this.setVisible(true);
-		this.setLayout(null);
 
-		JLabel label = new JLabel(
-				new ImageIcon(new ImageIcon("images/background_0000.png").getImage().getScaledInstance(1000, 800, 0)));
-		label.setBounds(0, 0, 1000, 800);
-
-		this.add(label);
-		this.setSize(1000, 800);
-		game();
-		
 	}
 
+	@Override
 
+	public void paintComponent(Graphics g) {
+		if (width == 0 || height == 0) {
+			width = getWidth();
 
-	public void game() {
+			height = getHeight();
 
+			imgBack = imgBack.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 
-		coinController = new CoinController();
-		marioVO = new MarioVO();
+			imgPlayer = imgPlayer.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 
-		this.setVisible(true);
-		this.setLayout(null);
+			x = width / 2;
+			y = height - 100;
+			w = 62;
+			h = 62;
+		}
 
-		JLabel label = new JLabel(
-				new ImageIcon(new ImageIcon("images/background_0000.png").getImage().getScaledInstance(1000, 800, 0)));
-		label.setBounds(0, 0, 1000, 800);
-		this.setSize(1000, 800);
+		g.drawImage(imgBack, 0, 0, this);
 
+		for (Coin t : coins) {
+			g.drawImage(t.img, t.x - t.w, t.y - t.h, this);
+		}
 
+		g.drawImage(imgPlayer, x - w, y - h, this);
 
-		this.setVisible(true);
+		g.setFont(new Font(null, Font.BOLD, 20));
 
+		g.drawString("Score: " + score, 10, 30);
 
-		this.repaint();
-		this.playGame();
 	}
 
+	public void move() {
+		for (int i = coins.size() - 1; i >= 0; i--) {
+			Coin t = coins.get(i);
+			t.move();
 
-	public void playGame() {
-		coinController = new CoinController();
-		int playTimes = 0;
-		boolean isJumping = true;
-		while(playTimes < 10000) {
-			try {
-				Thread.sleep(10);
-
-				coinController.moveToX(5);
-				if(playTimes % 10 == 0)
-					coinController.addCoin();
-				drawCoin();
-
-				if(isJumping) { // 점핑
-					if(playTimes % 3 == 0) {
-						marioVO.setVector(marioVO.getVector()+1);
-					}
-					isJumping = drawMario(4, true);
-				}
-				else { // 걷기
-					isJumping = drawMario( ( playTimes / 5 ) % 4, false );
-				}
-
-				if(playTimes % 1000 == 0)
-					isJumping = true;
-
-				playTimes += 1;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			if (t.isDead) {
+				coins.remove(i);
 			}
 		}
+		x += dx;
+//		y += dy;
+		if (x < w)
+			x = w;
+
+		if (x > width - w)
+			x = width - w;
+
+		if (y < h)
+			y = h;
+
+		if (y > height - h)
+			y = height - h;
 	}
 
-	// 현재 존재하는 코인들을 그려줌
-	public void drawCoin() {
-		List<CoinVO> coinList = coinController.getCoinList();
+	public void makeCoin() {
 
-		// 원래꺼 지워주기
-		for (JLabel tmpLblCoin : tmpLblCoinList) {
-			this.remove(tmpLblCoin);
+		if (width == 0 || height == 0)
+			return;
+
+		Random rnd = new Random();
+
+		int n = rnd.nextInt(15);
+
+		if (n == 0) {
+			coins.add(new Coin(imgCoin, width, height));
 		}
 
-		for (CoinVO coinVO : coinList) {
-			int imagePathIndex =  coinList.size()%3;
-			String imgPath = (coinVO.getCoinType()=='y')? CoinVO.getImagePathArr()[imagePathIndex] : CoinVO.getImagePathArr2()[imagePathIndex];
+	}
 
-			JLabel lblCoin = new JLabel();
-			Image coin = new ImageIcon( imgPath ).getImage().getScaledInstance(50, 50, 0);
-			lblCoin.setIcon(new ImageIcon(coin));
-			lblCoin.setBounds(coinVO.getCoinX(), coinVO.getCoinY(), 50, 50);
-			this.add(lblCoin);
-			tmpLblCoinList.add(lblCoin);
+	public void checkCollision() {
 
+		for (Coin t : coins) {
+			int left = t.x - t.w;
+
+			int right = t.x + t.w;
+
+			int top = t.y - t.h;
+
+			int bottom = t.y + t.h;
+
+			if (x > left && x < right && y > top && y < bottom) {
+
+				t.isDead = true; // 충돌했음
+
+				score += 5;
+
+			}
 
 		}
+
+	}
+
+	class GameThread extends Thread {
+		@Override
+		public void run() {
+
+			while (true) {
+				makeCoin();
+				move();
+				checkCollision();
+				repaint();
+
+				try { // 너무 빨리 돌아서 천천히 돌도록
+
+					sleep(20);
+
+				} catch (InterruptedException e) {
+				}
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * 화면에 그려질때 호출이 됨.
+	 */
+	/*
+	 * public void paint(Graphics g) { super.paint(g); g.drawLine(0, BOTTOM_Y,
+	 * this.getWidth(), BOTTOM_Y); g.setColor(Color.black); String info =
+	 * "출처: 진수의 병신짓 "; g.drawString(info, 10, 45); g.setColor(Color.blue); String
+	 * info2 = "경고 : 바탕화면 한번 클릭하고 프로그램 다시 클릭해야 움직임"; g.drawString(info2, 10, 60);
+	 * 
+	 * 
+	 * Image image = null; image =
+	 * Toolkit.getDefaultToolkit().getImage("images/mario0.gif");
+	 * 
+	 * BufferedImage bi = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+	 * g.drawImage(image, this.character.getX(), this.character.getY(), this);
+	 * g.drawImage(bi, this.character.getX(), this.character.getY(), this);
+	 * 
+	 * }
+	 */
+	/**
+	 * 디버그를 하기 위한 함수 (함수내부에서 릴리즈 모드일경우 표준출력을 하지 않도록 함)
+	 */
+	public void debug(String s) {
+		if (this.mode == MODE_DEBUG)
+			System.out.println(s);
+	}
+
+	public void background() {
+		URL url2 = getClass().getClassLoader().getResource("background_0000.gif");
+		back = new JLabel(new ImageIcon(url2));
+		back.setBounds(0, 0, 1000, 800);
+		this.add(back);
 
 		this.repaint();
 	}
 
+	@Override
+	public void jumpTimeArrived(int jumpIdx, int jumpy) {
+		// TODO Auto-generated method stub
 
-
-	// 마리오를 그려줌
-	public boolean drawMario(int imagePathIndex, boolean isJumping) {
-		boolean jumpResult = marioVO.moveMario(isJumping);
-		String imgPath = marioVO.getImagePathArr()[imagePathIndex];
-
-		JLabel lblMario = new JLabel();
-		Image coin = new ImageIcon( imgPath ).getImage().getScaledInstance(50, 50, 0);
-		lblMario.setIcon(new ImageIcon(coin));
-		lblMario.setBounds(marioVO.getMarioX(), marioVO.getMarioY(), 50, 50);
-		this.add(lblMario);
-		tmpLblCoinList.add(lblMario);
-
-		this.repaint();
-
-		return jumpResult;
 	}
+
+	@Override
+	public void jumpTimeEnded() {
+		// TODO Auto-generated method stub
+
+	}
+
 }
-

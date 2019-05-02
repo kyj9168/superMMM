@@ -16,6 +16,7 @@ public class CoinController {
 	
 	// 코인을 리스트에 추가
 	public void addCoin() {
+		System.out.println("addcoin");
 		Random random = new Random();
 		final int coinX = 950; // 초기 x좌표
 		int coinY = random.nextInt(100)+500; // 초기 y좌표

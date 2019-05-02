@@ -5,17 +5,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class RankPanel extends JPanel{
-	private MainFrame mf;
-	private JPanel op;
+	private JFrame mf;
+	private JPanel panel;
 	
-	public RankPanel(MainFrame mf) {
+	public RankPanel(JFrame mf) {
 		
 		this.mf = mf;
-		this.op = this;
+		panel = this;
 		this.setLayout(null);
 		
 		this.setBounds(300, 200, 1000, 800);
@@ -34,21 +35,22 @@ public class RankPanel extends JPanel{
 
 	          @Override
 	          public void actionPerformed(ActionEvent e) {
-	             ChangePanel.changePanel(mf, op, new todayCoin(mf));
+	             ChangePanel cp = new ChangePanel(mf, panel);
+					todayCoin todayCoin = new todayCoin(mf);
+					cp.replacePanel(todayCoin);
 	          }
 	       });
 	       this.add(home);
 
-		JPanel panel = new JPanel();
-		panel.setSize(1000,800);
+		JPanel panel2 = new JPanel();
+		panel2.setSize(1000,800);
 			
-		panel.setLayout(null);
+		panel2.setLayout(null);
 			
-		panel.add(home);
-		panel.add(label);
+		panel2.add(home);
+		panel2.add(label);
 			
-		this.add(panel);
-		mf.add(this);
+		this.add(panel2);
 	}
 	
 	public void printRank() {
