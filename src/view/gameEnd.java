@@ -29,6 +29,7 @@ public class gameEnd extends JPanel{
 		
 		this.setLayout(null);
 
+		MainFrame.Sound("audio/GameOver.wav", true);
 
 		JLabel label = new JLabel(
 				new ImageIcon(new ImageIcon("images/gamebackground.jpg").getImage().getScaledInstance(1000, 800, 0)));

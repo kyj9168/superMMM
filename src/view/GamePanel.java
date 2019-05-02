@@ -64,7 +64,6 @@ public class GamePanel extends JPanel implements JumpListener, Debuggable {
 		panel = this;
 		this.setBounds(0, 0, 1000, 800);
 
-		MainFrame.Sound("audio/GameOver.wav", true);
 
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 
@@ -76,15 +75,18 @@ public class GamePanel extends JPanel implements JumpListener, Debuggable {
 		
 		imgPinkCoin = toolkit.getImage("images/pink03.gif");
 		
-		imgBomb = toolkit.getImage("images/bomb.png");
+		imgBomb = toolkit.getImage("images/bomb2.png");
 		
+		MainFrame.Sound("audio/MainTheme.wav", false);
 
 		GameThread gThread = new GameThread();
 		gThread.start();
 		this.setVisible(true);
 
 	}
-
+	int coin;
+	int pink;
+	int bomb;
 	@Override
 
 	public void paintComponent(Graphics g) {
@@ -103,7 +105,7 @@ public class GamePanel extends JPanel implements JumpListener, Debuggable {
 			w = 100;
 			h = 100;
 		}
-
+		
 		g.drawImage(imgBack, 0, 0, this);
 
 		for (Coin t : coins) {
@@ -115,7 +117,19 @@ public class GamePanel extends JPanel implements JumpListener, Debuggable {
 		for (Bomb b : bombs) {
 			g.drawImage(b.img, b.x - b.w, b.y - b.h, this);
 		}
-
+		
+		String scoin = "생성된 코인 수 : " + coin;
+		g.setColor(Color.BLACK);
+		g.drawString(scoin, 800, 50);
+		
+		String spink = "생성된 핑크 코인 수 : " + pink;
+		g.setColor(Color.BLACK);
+		g.drawString(spink, 800, 80);
+		
+		String sbomb = "생성된 폭탄 수 : " + bomb;
+		g.setColor(Color.RED);
+		g.drawString(sbomb, 800, 110);
+		
 		g.drawImage(imgPlayer, x - w, y - h, this);
 
 		g.setFont(new Font(null, Font.BOLD, 20));
@@ -186,24 +200,24 @@ public class GamePanel extends JPanel implements JumpListener, Debuggable {
 
 		if (n == 0) {
 			coins.add(new Coin(imgCoin, width, height));
-			coinCtn++;
+			coin++;
 		}
 
 		Random rndo = new Random();
 
-		int n1 = rndo.nextInt(30);
+		int n1 = rndo.nextInt(40);
 
 		if (n1 == 0) {
 			pinkCoins.add(new PinkCoin(imgPinkCoin, width, height));
-			coinCtn++;
+			pink++;
 		}
 		Random rndom = new Random();
 		
-		int n2 = rndom.nextInt(30);
+		int n2 = rndom.nextInt(45);
 		
 		if (n2 == 0) {
 			bombs.add(new Bomb(imgBomb, width, height));
-			coinCtn++;
+			bomb++;
 		}
 
 	}
@@ -243,7 +257,7 @@ public class GamePanel extends JPanel implements JumpListener, Debuggable {
 				
 				p.isDead = true; // 충돌했음
 				
-				MainFrame.Sound("audio/Coin.wav", false);
+				MainFrame.Sound("audio/Dragon Coin.wav", false);
 				
 				score += 50;
 				
@@ -263,7 +277,7 @@ public class GamePanel extends JPanel implements JumpListener, Debuggable {
 				
 				b.isDead = true; // 충돌했음
 				
-				MainFrame.Sound("audio/Coin.wav", false);
+				MainFrame.Sound("audio/MarioDies.wav", false);
 				
 				score -= 50;
 				
@@ -279,7 +293,7 @@ public class GamePanel extends JPanel implements JumpListener, Debuggable {
 			label.setBounds(850, 0, 150, 50);
 			label.setFont(new Font("Sanscerif", Font.BOLD, 20));
 			panel.add(label);
-			for (int i = 1200; i >= 0; i--) {
+			for (int i = 2400; i >= 0; i--) {
 
 				try { // 너무 빨리 돌아서 천천히 돌도록
 					System.out.println(i);
@@ -297,8 +311,8 @@ public class GamePanel extends JPanel implements JumpListener, Debuggable {
 
 			}
 			ChangePanel cp = new ChangePanel(mf, panel);
-			gameEnd sp = new gameEnd(mf);
-			cp.replacePanel(sp);
+			gameEnd ge = new gameEnd(mf);
+			cp.replacePanel(ge);
 		}
 
 	}
