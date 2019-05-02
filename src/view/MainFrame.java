@@ -28,20 +28,6 @@ public class MainFrame extends JFrame {
 
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-/*		try {
-			Player p = new Player(new FileInputStream("audio/MainSong.mp3"));
-			System.out.println("play");
-			p.play();
-			p.close();
-			System.out.println("stop");
-		
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JavaLayerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		
 		addMouseListener(new MouseListener() {
 			
